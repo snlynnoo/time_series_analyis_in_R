@@ -320,13 +320,14 @@ ses_training_quakes <- ses(training_quakes, initial = 'simple') #if you want to 
 # 1. quakes.dat
 # 2. population.csv - average growth of population from 1970 to 2017
 
+# ========== 1.Solution for quake.dat ==========
 
 library('forecast')
 tsdisplay(quakes) #plotting ACF and PACF plot
 
 library('tseries')
 adf.test(quakes)
-# the data is not stationary - a weak trend detected
+# the data is not stationary - a weak trend component detected
 
 # will check how many differencing is required
 ndiffs(quakes)
@@ -346,14 +347,20 @@ summary(quakes_arima011)
 
 # to get suggestion for the best recommended arima model
 auto.arima(quakes)
-auto.arima(quakes, trace = T) # trace back other models
 
-# zero -> not going to have intercept 
-# non-zero -> will have constant intercept
+# trace back other suggested models
+auto.arima(quakes, trace = T) 
 
+# zero mean model     -> not going to have intercept and constant value
+# non-zero mean model -> will have constant values
+
+# to decide whether differencing or w/out differencing is better ?
+# use performance evaluation matrices 
+
+# Builing ARIMA (1, 0, 1)
 quakes_arima101 <- arima(quakes, order = c(1, 0, 1))
 
-# will compare their perfomance between our model and auto.arima
+# comparing their performance between our model and auto.arima
 accuracy(quakes_arima011)
 accuracy(quakes_arima101)
 
@@ -364,18 +371,34 @@ accuracy(quakes_arima101)
 #----------------------------------------------------------------------------------
 # We will use 101 since RMSE, MAE is lower
 
+# ========== 2.Solution for average population growth ==========
+
+# converting TS data (The question said within 1970 ~ 2017 only)
 avegrowthpop <- ts (Population_Malaysia$`Average annual population growth rate (%)`, start = 1970, end = 2017)
+
+# plotting ACF and PACF
 tsdisplay(avegrowthpop)
+
+# testing stationary
 adf.test(avegrowthpop) # => Not stationary
-ndiffs(avegrowthpop) # Recommended once d=1
+
+# getting recommended number of diff.
+ndiffs(avegrowthpop) 
+# Recommended --> [1] --> d=1 (characteristics of a liner trend)
+
+# plotting ACF and PACF for transformed data directly
 tsdisplay(diff(avegrowthpop, 1))
-# it is confusing, how we should do ?
+
+# if it is confusing, how should we do ?
 # in this case check the original data ACF and PACF
 # when we look up it, still not sure
-# then use use auto.arima() => arima(011)
+# then use use auto.arima() => recommended model --> arima(011)
 
+# Building ARIMA (0, 1, 1)
 avegrowthpop_arima011 <- arima(avegrowthpop, order = c(0,1,1))
-summary(avegrowthpop_arima011)
+
+# to generate the unknown parameters/coefficient(s)
+summary(avegrowthpop_arima011) 
 
 auto.arima(avegrowth, trace = T)
 # ARIMA(0,1,1) with drift (recommended)
@@ -399,4 +422,3 @@ forecast(quakes_arima101, h= 5)
 plot(forecast(quakes_arima101, h= 5))
 lines(fitted(quakes_arima101), col=8, lwd=2)
 checkresiduals(avegrowthpop_arima011)
-
