@@ -1,6 +1,6 @@
 #--------------------------DAY (1)-----------------------
-#Plot time series
-#Package List: 'tseries', 'forecast'
+# Plot time series
+# Package List: 'tseries', 'forecast', 'uroot', 'TTR', 'dynlm', 'lmtest' 
 
 # Importing data set
 library(readr)
@@ -41,7 +41,7 @@ Acf(quakes, ylim=c(-1,1))
 Acf(quakes)
 plot(quakes)
 install.packages('uroot')
-#library(uroot)
+# library(uroot)
 library(tseries)
 adf.test(quakes)
 plot(Sales)
@@ -79,7 +79,7 @@ library('uroot')
 ch.test(beer) #from Uroot 
 ch.test(diff12_diff_beer)
 
-#---------------------Tutorial (1-Q7)-------------------
+# ---------------------Tutorial (1-Q7)-------------------
 # ACF, ADF, CH tests
 
 library('forecast')
@@ -89,10 +89,10 @@ adf.test(beer)
 library('uroot')
 ch.test(beer)
 # Differencing for both regular & seasonal
-#for regular
+# for regular
 diff_beer <- diff(beer, 1)
 
-#for monthly seasonal
+# for monthly seasonal
 diff12_diff_beer <- diff(diff_beer, 12) 
 plot(diff12_diff_beer)
 
@@ -103,7 +103,7 @@ library('uroot')
 ch.test(beer) #from Uroot  
 ch.test(diff12_diff_beer)
 
-#how to convert monthly data into quarterly?
+# how to convert monthly data into quarterly?
 beer.qtr <-aggregate(beer, 4)
 beer.qtr
 
@@ -155,7 +155,7 @@ legend("topright", c("Acutal", "3-MA", "10-MA", "SES"), col = 1:4, lwd = 2, cex 
 
 
 # Jan 2023 - MA, WMA, MMA, EMA, SES, LTM, Holt's method
-#---------------------Practical Exercise-----------------------
+# ---------------------Practical Exercise-----------------------
 # Perform time series analysis for the data below. 
 # You are required to use THREE of the following forecasting techniques to perform the forecast:
 # -> Moving average or Weighted Moving Average  
@@ -165,7 +165,7 @@ legend("topright", c("Acutal", "3-MA", "10-MA", "SES"), col = 1:4, lwd = 2, cex 
 # -> Holts Method 
 # Holt & SES must be choosen "fitted" model
 
-#install.packages("TTR")
+# install.packages("TTR")
 Population <- ts(Population_Malaysia$Total, start = 1972)
 # use $Total : we will use total population variable and starting from 1972 to end
 # not required 'frequency' parameter since yearly data,if seasonal, we must specify 
@@ -207,13 +207,13 @@ legend("bottomright", c("Actual","3-WMA","3-EMA","SES", "Holt"), col=1:5, lwd=2,
 #-------------Regression with dummy exercise-----------------
 
 View(sales)
-#you can also do with 'dynlm'
+# you can also do with 'dynlm'
 library('forecast')
-#make sure the data is in Ts type first
+# make sure the data is in Ts type first
 time = 1:length(Sales) #setting the time start at 1 until how many rows the data set has
 season = seasonaldummy(Sales) #adding dummy
 
-#Ts Linear model (depends on the package, confirm the data type to be passed.)
+# TS Linear model (depends on the package, confirm the data type to be passed.)
 lmM <- tslm(Sales~time+season) # EQ: Sales = time + season
 summary(lmM)
 # you can extend your forecast from here
@@ -224,12 +224,12 @@ decomposition_additive <- decompose(Sales, type = "additive")
 plot(decomposition_additive) #random means the error plot
 decomposition_additive$figure #to give adjusted seasonal variation values # the avg. is nearly 0
 
-#test: multiplicative model
+# test: multiplicative model
 decomposition_multiplicative <- decompose(Sales, type = "multiplicative")
 decomposition_multiplicative$figure # the number are around 1
 plot(decomposition_multiplicative)
 
-#alternative decomposition function in R - stl()
+# alternative decomposition function in R - stl()
 # stl() - stat package
 # stlf() - forecast package
 # stlm() - forecast
@@ -251,7 +251,7 @@ summary(stl(Sales, s.window = 7))
 beer # Monthly seasonal (1970 ~ 1977)
 # Forecast ? 1978 ~ 1982 for every month
 
-#SES
+# SES
 library('forecast')
 ses_beer <- ses(beer) #to auto-optimize, just leave empty
 ses_beer <- ses(beer, h=60, initial = 'simple') # h- forecast duration from function
@@ -261,7 +261,7 @@ ses_beer <- ses(beer, h=60, initial = 'simple') # h- forecast duration from func
 autoplot(ses_beer) # Refer in TSF one notes
 summary(ses_beer) # this can check what is the optimized parameter values by R
 
-#Holt's method
+# Holt's method
 holt_beer <- holt(beer, h=60, initial = 'simple')
 autoplot(holt_beer) # will generate with large scale range
 
@@ -298,11 +298,11 @@ decompose( ) # they will plot the four individual layouts
 
 #-------------------Data Partition Ex.s-----------------------
 
-#Split the data set into 80 % and 20%
+# Split the data set into 80 % and 20%
 View(Earthquakes)
 quakes
 # the data is a list 
-#R array starts with 1, not starting with 0
+# R array starts with 1, not starting with 0
 
 # 80% training set
 training_quakes <- quakes[1:(length(quakes)*0.8)]
@@ -316,57 +316,89 @@ library('forecast')
 ses_training_quakes <- ses(training_quakes, initial = 'simple') #if you want to optimize, don't pass any arguments
 
 #-------------------ARIMA MODEL EX(1)-----------------------
+# Analyze the following data and formulate the model equation for the ARIMA model you chosen; 
+# 1. quakes.dat
+# 2. population.csv - average growth of population from 1970 to 2017
+
+# ========== 1.Solution for quake.dat ==========
 
 library('forecast')
 tsdisplay(quakes) #plotting ACF and PACF plot
 
 library('tseries')
 adf.test(quakes)
-# the data is not stationary - a weak trend detected
+# the data is not stationary - a weak trend component detected
 
 # will check how many differencing is required
 ndiffs(quakes)
-# the result is 0 => not recommended to do differencing
+# the result is 0 => not recommended for differencing
 
-#apply 1st differencing and plot ACF & PACF directly
+# apply 1st differencing and plot ACF & PACF directly
 tsdisplay(diff(quakes, 1)) 
+
+# Since ACF is dominant --> MA(q) process
+# Tentative ARIMA model : ARIMA(0, 1, 1)
 
 # Building ARIMA model from forecast package
 quakes_arima011 <- arima(quakes, order = c(0,1,1)) #need to pass original data (not diff'ed data)
+
+# to track the coefficients 
 summary(quakes_arima011)
 
-#to suggest the best suitable arima model
+# to get suggestion for the best recommended arima model
 auto.arima(quakes)
-auto.arima(quakes, trace = T) # trace back other models
 
-# zero -> not going to have intercept 
-# non-zero -> will have constant intercept
+# trace back other suggested models
+auto.arima(quakes, trace = T) 
 
+# zero mean model     -> not going to have intercept and constant value
+# non-zero mean model -> will have constant values
+
+# to decide whether differencing or w/out differencing is better ?
+# use performance evaluation matrices 
+
+# Builing ARIMA (1, 0, 1)
 quakes_arima101 <- arima(quakes, order = c(1, 0, 1))
 
-# will compare their perfomance between our model and auto.arima
+# comparing their performance between our model and auto.arima
 accuracy(quakes_arima011)
 accuracy(quakes_arima101)
 
 # ------------ Model's result -----------------------------------------------------
 #                    ME    RMSE      MAE      MPE     MAPE      MASE      ACF1
-#Training 011 0.1270341  6.07418 4.669665 -7.35535 25.97658 0.8618214 0.0287003
-#Training 101 0.1182301 5.887629 4.555481 -9.677964 26.5983 0.8407479 0.009220841
+# Training 011 0.1270341  6.07418 4.669665 -7.35535 25.97658 0.8618214 0.0287003
+# Training 101 0.1182301 5.887629 4.555481 -9.677964 26.5983 0.8407479 0.009220841
 #----------------------------------------------------------------------------------
 # We will use 101 since RMSE, MAE is lower
 
+# ========== 2.Solution for average population growth ==========
+
+# converting TS data (The question said within 1970 ~ 2017 only)
 avegrowthpop <- ts (Population_Malaysia$`Average annual population growth rate (%)`, start = 1970, end = 2017)
+
+# plotting ACF and PACF
 tsdisplay(avegrowthpop)
+
+# testing stationary
 adf.test(avegrowthpop) # => Not stationary
-ndiffs(avegrowthpop) # Recommended once d=1
+
+# getting recommended number of diff.
+ndiffs(avegrowthpop) 
+# Recommended --> [1] --> d=1 (characteristics of a liner trend)
+
+# plotting ACF and PACF for transformed data directly
 tsdisplay(diff(avegrowthpop, 1))
-# it is confusing, how we should do ?
+
+# if it is confusing, how should we do ?
 # in this case check the original data ACF and PACF
 # when we look up it, still not sure
-# then use use auto.arima() => arima(011)
+# then use use auto.arima() => recommended model --> arima(011)
 
+# Building ARIMA (0, 1, 1)
 avegrowthpop_arima011 <- arima(avegrowthpop, order = c(0,1,1))
-summary(avegrowthpop_arima011)
+
+# to generate the unknown parameters/coefficient(s)
+summary(avegrowthpop_arima011) 
 
 auto.arima(avegrowth, trace = T)
 # ARIMA(0,1,1) with drift (recommended)
@@ -390,4 +422,3 @@ forecast(quakes_arima101, h= 5)
 plot(forecast(quakes_arima101, h= 5))
 lines(fitted(quakes_arima101), col=8, lwd=2)
 checkresiduals(avegrowthpop_arima011)
-
