@@ -1,0 +1,28 @@
+{
+    "id": "7AA58B5F",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1677128792449.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "id": "e95e1fe6053045e9a606cc95bd6525d6",
+        "name": "beer",
+        "title": "beer",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 0,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1677128792449,
+    "read_only": false,
+    "read_only_alternatives": []
+}
