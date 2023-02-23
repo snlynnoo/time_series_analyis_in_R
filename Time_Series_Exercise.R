@@ -406,19 +406,24 @@ auto.arima(avegrowth, trace = T)
 # drift model do not put the constant mean zero
 # this is not our focus in this module, we will only use pure arima
 
-# to carry p-value for t-test
-install.packages('lmtest')
+# to get the p-value of t-test in the model
+# install.packages('lmtest') 
 library('lmtest')
 coeftest(avegrowthpop_arima011)
-# p-value is not significant (0.052)
+# the coefficient is not significant since p-value is 0.052, > 5% CI
 
-# to conduct Ljung Box test use forecast pack
-checkresiduals(avegrowthpop_arima011)
+# to conduct Ljung Box test and Residual Analysis
+checkresiduals(avegrowthpop_arima011) # from forecast package
 checkresiduals(quakes_arima011)
 checkresiduals(quakes_arima101)
 
 # to conduct forecasts (forecast pack)
-forecast(quakes_arima101, h= 5)
+# this is a yearly data and will forecast for next five years
+forecast(quakes_arima101, h = 5) 
+
+# to plot the TS with forecasts
 plot(forecast(quakes_arima101, h= 5))
+
+# to add fitted model into the existing plot
 lines(fitted(quakes_arima101), col=8, lwd=2)
-checkresiduals(avegrowthpop_arima011)
+  
