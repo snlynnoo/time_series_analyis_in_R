@@ -1,26 +1,26 @@
 {
-    "id": "B71A3178",
+    "id": "A01BA2C3",
     "path": "~/OneDrive/OneDrive - Asia Pacific University/Third Semester/02. Time Series/TST_R/TST_3SEM/Time_Series_Exercise.R",
     "project_path": "Time_Series_Exercise.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "2314200726",
     "contents": "",
     "dirty": false,
-    "created": 1677057260085.0,
+    "created": 1677223246606.0,
     "source_on_save": false,
-    "relative_order": 1,
+    "relative_order": 2,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "423,31",
-        "scrollLine": "0"
+        "cursorPosition": "427,44",
+        "scrollLine": "405"
     },
     "folds": "",
-    "lastKnownWriteTime": 1677166875,
+    "lastKnownWriteTime": 1677334350,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1677166875073,
+    "last_content_update": 1677334350046,
     "read_only": false,
     "read_only_alternatives": []
 }

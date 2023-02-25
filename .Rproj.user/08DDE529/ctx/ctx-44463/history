@@ -1,0 +1,512 @@
+auto.arima(avegrowth, trace = T)
+install.packages('lmtest')
+install.packages("lmtest")
+library('lmtest')
+coeftest(avegrowthpop_arima011)
+# to conduct Ljung Box test use forecast pack
+checkresiduals(avegrowthpop_arima011)
+checkresiduals(quakes_arima101)
+checkresiduals(quakes_arima011)
+# to conduct forecasts (forecast pack)
+forecast(quakes_arima101, h= 5)
+plot(forecast(quakes_arima101, h= 5))
+lines(fitted(quakes_arima101), col=8, lwd=2)
+checkresiduals(avegrowthpop_arima011)
+??Wheat2
+beer
+ses_beer <- ses(beer, h=60, initial = 'simple') # h- forecast duration from function
+#SES
+library('forecast')
+ses_beer <- ses(beer, h=60, initial = 'simple') # h- forecast duration from function
+# On default, they will generate next 10 values, i.e, up to 1978-Oct if you want more specify 'h'
+# Here 5 yr = 12 months x 5 yrs = 60, therefore, h=60 is provided in the function
+# 'simple' mean Use the first value as initial value (13.092)
+autoplot(ses_beer)
+View(season)
+summary(ses_beer)
+#Holt's method
+holt_beer <- holt(beer, h=60, initial = 'simple')
+autoplot(holt_beer)
+#Holt's method
+holt_beer <- holt(beer, h=60, initial = 'simple')
+autoplot(holt_beer)
+holt_beer <- holt(beer, h=60)
+autoplot(holt_beer)
+summary(holt_beer)
+summary(holt_beer)
+plot(holt_beer, main = "Beer Production - Holt's Method Forecast", xlab = "year", ylab = "Production")
+lines(holt_beer$fitted, col=2, lwd=2)
+#Holt Winter's method
+HW_beer <- hw(beer, h=60) #this is from forecast package, just used the optimized one
+plot(HW_beer, main='Beer Production - Holt Winter Forecast', xlab = 'Year', ylab = "Production")
+lines(HW_beer$fitted, col=2, lwd=2)
+#Holt Winter's method
+HW_beer <- hw(beer, h=60) #this is from forecast package, just used the optimized one
+plot(HW_beer, main='Beer Production - Holt Winter Forecast', xlab = 'Year', ylab = "Production")
+lines(HW_beer$fitted, col=2, lwd=2) # overlap the fitted model into the existing plot
+summary(HW_beer)
+#for multiplicative model
+HW_beer_multiplicative <- hw(beer, h=60, seasonal = "multiplicative")
+plot(HW_beer_multiplicative, main='Beer Production - Holt Winter Forecast', xlab = 'Year', ylab = "Production")
+lines(HW_beer_multiplicative$fitted, col=2, lwd=2) # overlap the fitted model into the existing plot
+summary(HW_beer_multiplicative)
+# Decomposition model
+# stl() - from stat package
+# stlf() -from forecast package (they both are similar, just different in function names)
+# Here, we will use from forecast package
+stlf(beer, h=60)
+# Decomposition model
+# stl() - from stat package
+# stlf() -from forecast package (they both are similar, just different in function names)
+# Here, we will use from forecast package
+decomposition_beer <- stlf(beer, h=60)
+summary(decomposition_beer)
+autoplot(decomposition_beer)
+library('forecast')
+tsdisplay(quakes) #
+library('tseries')
+adf.test(quakes)
+# will check how many differencing is required
+ndiffs(quakes)
+tsdisplay(diff(quakes, 1)) #apply 1st differencing and plot ACF & PACF directly
+# Building ARIMA model from forecast package
+quakes_arima011 <- arima(quakes, order = c(0,1,1)) #need to pass original data (not diff'ed data)
+summary((quakes_arima011))
+summary(quakes_arima011)
+# Building ARIMA model from forecast package
+quakes_arima011 <- arima(quakes, order = c(0,1,1)) #need to pass original data (not diff'ed data)
+# to track the coefficients
+summary(quakes_arima011)
+# to get suggestion for the best recommended arima model
+auto.arima(quakes)
+auto.arima(quakes, trace = T) # trace back other suggested models
+# Builing ARIMA (1, 0, 1)
+quakes_arima101 <- arima(quakes, order = c(1, 0, 1))
+# will compare their perfomance between our model and auto.arima
+accuracy(quakes_arima011)
+accuracy(quakes_arima101)
+# converting TS data (The question said within 1970 ~ 2017 only)
+avegrowthpop <- ts (Population_Malaysia$`Average annual population growth rate (%)`, start = 1970, end = 2017)
+# plotting ACF and PACF
+tsdisplay(avegrowthpop)
+# testing stationary
+adf.test(avegrowthpop) # => Not stationary
+# getting recommended number of diff.
+ndiffs(avegrowthpop) # Recommended --> once --> d=1
+# plotting ACF and PACF for transformed data directly
+tsdisplay(diff(avegrowthpop, 1))
+auto.arima(avegrowth, trace = T)
+e
+# Building ARIMA (0, 1, 1)
+avegrowthpop_arima011 <- arima(avegrowthpop, order = c(0,1,1))
+# to generate the unknown parameters/coefficient(s)
+summary(avegrowthpop_arima011)
+tsdisplay(Sales, lag.max = 36)
+library('forecast')
+tsdisplay(Sales, lag.max = 36)
+# to check the stationary for seasonality
+library('tseries')
+library('uroot')
+ch.test(Sales)
+# regular differencing
+ndiffs(Sales)
+# seasoal differencing
+sndiffs(Sales)
+# seasoal differencing
+nsdiffs(Sales)
+traning_sales <- Sales[1:0.8*length(Sales)]
+# testing set - 20%
+traning_sales <- Sales[0.8*length((Sales +1)): (length(Sales)+1)]
+# testing set - 20%
+traning_sales <- Sales[0.8*length((Sales+1)):(length(Sales)+1)]
+# testing set - 20%
+traning_sales <- Sales[0.8*length((Sales+1)):(length(Sales)+1)]
+# trainig set - 80%
+traning_sales <- Sales[1:0.8*length(Sales)]
+# testing set - 20%
+testing_sales <- Sales[0.8*length((Sales+1)):(length(Sales)+1)] # put '-' also ok
+# testing set - 20%
+testing_sales <- Sales[(0.8*length(Sales+1)):(length(Sales)+1)] # put '-' also ok
+# testing set - 20%
+testing_sales <- Sales[(0.8*length(Sales+1)):(length((Sales)+1))] # put '-' also ok
+# plot ACF and PACF for training set
+tsdisplay(traning_sales)
+adf.test(traning_sales)
+ch.test(traning_sales)
+# trainig set - 80%
+traning_sales <- Sales[1:0.8*length(Sales)]
+# trainig set - 80%
+traning_sales <- ts(Sales[1:0.8*length(Sales)])
+# trainig set - 80%
+traning_sales <- ts(Sales[1:(0.8*length(Sales))])
+# trainig set - 80%
+traning_sales <- ts(Sales[1:(0.8*length(Sales))], frequency = 4)
+training_beer <- ts(beer[1:(0.8*length(beer))], frequency =12))
+training_beer <- ts(beer[1:(0.8*length(beer))], frequency =12)
+testting_beer <- beer[(0.8*length(beer))+1 : (length(beer)+1)]
+training_beer
+testting_beer
+tsdisplay(training_beer, lag.max = 60)
+adf.test(training_beer)
+ch.test(training_beer)
+ndiff(training_beer)
+nsdiffs(training_beer)
+ndiffs(training_beer)
+nsdiffs(training_beer)
+tsdisplay(diff(diff(training_beer,1),12)
+tsdisplay(diff(diff(training_beer,1),12))
+tsdisplay(diff(diff(training_beer,1),12))
+beer
+View(beer)
+beer
+Sales
+# to get the p-value of t-test in the model
+# install.packages('lmtest')
+library('lmtest')
+coeftest(avegrowthpop_arima011)
+# to generate the unknown parameters/coefficient(s)
+summary(avegrowthpop_arima011)
+# to conduct Ljung Box test and Residual Analysis
+checkresiduals(avegrowthpop_arima011) # from forecast package
+checkresiduals(quakes_arima011)
+checkresiduals(quakes_arima101)
+# comparing their performance between our model and auto.arima
+accuracy(quakes_arima011)
+accuracy(quakes_arima101)
+# to conduct forecasts (forecast pack)
+# this is a yearly data and will forecast for next five years
+forecast(quakes_arima101, h = 5)
+# to plot the TS with forecasts
+plot(forecast(quakes_arima101, h= 5))
+library('forecast')
+# to conduct forecasts (forecast pack)
+# this is a yearly data and will forecast for next five years
+forecast(quakes_arima101, h = 5)
+# to plot the TS with forecasts
+plot(forecast(quakes_arima101, h= 5))
+# to add fitted model into the existing plot
+lines(fitted(quakes_arima101), col=8, lwd=2)
+# to conduct Ljung Box test and Residual Analysis
+checkresiduals(avegrowthpop_arima011) # from forecast package
+data = read.csv('Dubai_weather_modified.csv')
+data = read.csv('datasets/Dubai_weather_modified.csv')
+plot(data$temp_avg.)
+plot(data$temp_avg)
+ts_temp = ts(data$temp_avg., frequency = 7)
+plot(ts_temp)
+ts_temp = ts(data$temp_avg.)
+plot(ts_temp)
+plot(data$temp_avg.)
+typeof(data$temp_avg.)
+ts_temp_num <- as.numeric(data$temp_avg.)
+data = read.excel('datasets/Dubai_weather_modified.xlsx')
+library('readxl)
+library(readxl)
+library("readxl")
+data = read.excel('datasets/Dubai_weather_modified.xlsx')
+data = read_excel('datasets/Dubai_weather_modified.xlsx')
+ts_temp = ts(data$temp_avg.)
+ts_temp = ts(data$`temp_avg `)
+plot(ts_temp)
+ts_temp = ts(data$`temp_avg `)
+ts_temp
+plot(ts_temp)
+is.na(data)
+sum(is.na(data))
+view(data)
+View(data)
+typeof(data$`temp_avg `)
+ts_temp = ts((as.numeric(data$`temp_avg `)
+ts_temp = ts((as.numeric(data$`temp_avg `))
+data = read_excel('datasets/Dubai_weather_modified.xlsx')
+View(data)
+typeof(data$`temp_avg `)
+typeof(data$temp_avg)
+ts_temp = ts((as.numeric(data$temp_avg))
+plot(ts_temp)
+data = read_excel('datasets/Dubai_weather_modified.xlsx')
+View(data)
+typeof(data$temp_avg)
+data = read_excel('datasets/Dubai_weather_modified.xlsx')
+View(data)
+typeof(data$temp_avg)
+ts_temp = ts((as.numeric(data$temp_avg))
+plot(ts_temp)
+sum(is.na(data))
+ts_temp = ts((as.numeric(data$temp_avg))
+data$temo_avg= as.numeric(data$temp_avg)
+data$temp_avg= as.numeric(data$temp_avg)
+my_vector <- ifelse(data$temp_avg == 0, NA, my_vector)
+sum(is.na(my_vector))
+my_vector
+data = read_excel('datasets/Dubai_weather_modified.xlsx')
+typeof(data$temp_avg)
+View(data)
+my_vector <- ifelse(data$temp_avg == 0, NA, my_vector)
+sum(is.na(my_vector))
+my_vector
+data$temp_avg= as.numeric(data$temp_avg)
+plot(ts_temp)
+sum(is.na(data))
+data = read_excel('datasets/Dubai_TSF.xlsx')
+View(data)
+typeof(data$temp_avg)
+typeof(data$temp)
+my_vector <- ifelse(data$temp_avg == 0, NA, my_vector)
+my_vector <- ifelse(data$temp == 0, NA, my_vector)
+sum(is.na(my_vector))
+my_vector
+data$temp
+plot(data$temp)
+colnames(data)
+plot(data$temp)
+plot(data$dew)
+plot(data$humidity)
+plot(data$wind)
+plot(data$pressure)
+plot(data$dew)
+plot(data$humidity)
+ts_temp <- ts(data$temp, start = c(2,1), frequency = 7)
+plot(ts_temp)
+decompose(ts_temp)
+plot(decompose(ts_temp))
+ACF(ts_temp)
+acf(ts_temp)
+library('forecast')
+tsdisplay(ts_temp)
+plot(decompose(ts_temp))
+my_vector <- ifelse(data$temp == 0, NA, my_vector)
+tsdisplay(ts_temp)
+tsdisplay(ts_temp)
+tsdisplay(ts_temp)
+library('forecast')
+tsdisplay(ts_temp)
+# Close all plot windows
+dev.off()
+tsdisplay(ts_temp)
+auto.arima(ts_temp, trace = T)
+ch.test(ts_temp)
+library("tseries")
+ch.test(ts_temp)
+ndiffs(ts_temp)
+tsdisplay(diff(ts_temp,1))
+tsdisplay(diff(ts_temp,2))
+auto.arima(ts_temp, trace = T)
+acf(ts_temp, ylim = c(-2,1))
+tsdisplay(diff(ts_temp,2))
+ch.test(ts_temp)
+library('uroot')
+ch.test(ts_temp)
+plot(data$wind)
+ts_temp <- ts(data$wind, start = c(2,1), frequency = 7)
+plot(ts_temp)
+# trend
+install.packages('trend')
+library('trend')
+ts_wind <- ts(data$wind, start = c(2,1), frequency = 7)
+plot(ts_wind)
+mk.test(ts_wind)
+# test seasonal
+install.packages('seastests')
+isSeasonal(ts_wind)
+library('seastests')
+isSeasonal(ts_wind)
+acf(ts_wind, ylim = c(-2,1))
+adf.test(ts_wind)
+library('tseries')
+adf.test(ts_wind)
+ts_wind <- ts(data$humidity, start = c(2,1), frequency = 7)
+plot(ts_wind)
+adf.test(ts_wind)
+# trend
+install.packages('trend')
+mk.test(ts_wind)
+auto.arima(ts_temp, trace = T)
+library("tseries")
+library('uroot')
+# convert to TS
+ts_wind <- ts(data$humidity, start = c(2,1), frequency = 7)
+plot(ts_wind)
+adf.test(ts_wind)
+mk.test(ts_wind)
+# convert to TS
+ts_wind <- ts(data$wind, start = c(2,1), frequency = 7)
+mk.test(ts_wind)
+acf(ts_wind, ylim = c(-2,1))
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# TS plot
+plot(ts_humidity)
+adf.test(ts_humidity)
+mk.test(ts_humidity)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+adf.test(ts_humidity)
+mk.test(ts_humidity)
+isSeasonal(ts_humidity)
+# ACF plot
+acf(ts_humidity, ylim = c(-2,1))
+# ACF plot
+acf(ts_humidity)
+adf.test(ts_humidity)
+# ACF plot
+acf(ts_humidity)
+Auto ARIMA
+# Import data
+library("readxl")
+data = read_excel('datasets/Dubai_TSF.xlsx')
+View(data)
+# Explore variables
+plot(data$temp)
+# Import data
+library("readxl")
+data = read_excel('datasets/Dubai_TSF.xlsx')
+View(data)
+# Explore variables
+plot(data$temp)
+plot(data$dew)
+plot(data$humidity)
+plot(data$wind)
+plot(data$pressure)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+plot(data$humidity)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# TS plot
+plot(ts_humidity)
+adf.test(ts_humidity)
+mk.test(ts_humidity)
+isSeasonal(ts_humidity)
+# ACF plot
+Acf(ts_humidity)
+# ACF plot
+library('forecast')
+Acf(ts_humidity)
+# convert to TS
+ts_humidity <- ts(data$wind, start = c(2,1), frequency = 7)
+# TS plot
+plot(ts_humidity)
+adf.test(ts_humidity)
+mk.test(ts_humidity)
+isSeasonal(ts_humidity)
+Acf(ts_humidity)
+tsdisplay(diff(ts_temp,2))
+tsdisplay(ts_humidity)
+tsdisplay(diff(ts_humidity,1))
+tsdisplay(ts_humidity)
+# Create training and testing datasets
+training_quakes <- quakes[1:(length(quakes)*0.8)]
+testing_quakes <- quakes[(length(quakes)*0.8+1):(length(quakes)+1)]
+# Plot both datasets
+ggplot() +
+geom_point(data = training_quakes, aes(x = long, y = lat, color = depth), alpha = 0.5) +
+geom_point(data = testing_quakes, aes(x = long, y = lat, color = depth), alpha = 0.5) +
+labs(x = "Longitude", y = "Latitude", color = "Depth")
+library(ggplot2)
+# Plot both datasets
+ggplot() +
+geom_point(data = training_quakes, aes(x = long, y = lat, color = depth), alpha = 0.5) +
+geom_point(data = testing_quakes, aes(x = long, y = lat, color = depth), alpha = 0.5) +
+labs(x = "Longitude", y = "Latitude", color = "Depth")
+# Set up the plot
+plot(x = training_quakes$long, y = training_quakes$lat,
+col = rgb(0, 0, 1, 0.5), xlab = "Longitude", ylab = "Latitude")
+points(x = testing_quakes$long, y = testing_quakes$lat,
+col = rgb(1, 0.5, 0, 0.5))
+# Add a legend
+legend("topright", c("Training set", "Testing set"),
+col = c(rgb(0, 0, 1, 0.5), rgb(1, 0.5, 0, 0.5)), pch = 1,
+bty = "n")
+points(x = testing_quakes, y = testing_quakes,
+col = rgb(1, 0.5, 0, 0.5))
+# Set up the plot
+plot(x = training_quakes, y = training_quakes,
+col = rgb(0, 0, 1, 0.5), xlab = "Longitude", ylab = "Latitude")
+points(x = testing_quakes, y = testing_quakes,
+col = rgb(1, 0.5, 0, 0.5))
+# Add a legend
+legend("topright", c("Training set", "Testing set"),
+col = c(rgb(0, 0, 1, 0.5), rgb(1, 0.5, 0, 0.5)), pch = 1,
+bty = "n")
+# Plotting original data
+plot(Population, main = "Malaysian Population 1970-2019", xlab = "Year", ylab = "Total Population")
+lines(holt_pop$fitted, col=5, lwd=2) #must choose fitted
+# 80% training set
+training_quakes <- quakes[1:(length(quakes)*0.8)]
+# 80% training set
+training_quakes <- quakes[1:(length(quakes)*0.8)]
+# Split the data set into 80 % and 20%
+View(Earthquakes)
+quakes
+# 80% training set
+training_quakes <- quakes[1:(length(quakes)*0.8)]
+# 20% test set
+testing_quakes <- quakes[(length(quakes)*0.8+1):(length(quakes)+1)] # must be add +1 to get till the end
+testing_quakes
+# SES
+library('forecast')
+ses_training_quakes <- ses(training_quakes, initial = 'simple') #if you want to optimize, don't pass any arguments
+plot(quakes)
+lines(training_quakes, col=2, lwd =2)
+plot(quakes)
+lines(training_quakes, col=2, lwd =2)
+lines(testing_quakes)
+Acf(ts_humidity)
+library('uroot')
+ch.test(ts_humidity)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# TS plot
+plot(ts_humidity)
+# ADF test for stationary
+library('tseries')
+adf.test(ts_humidity)
+# ADF test for stationary
+library('tseries')
+adf.test(ts_humidity)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# TS plot
+plot(ts_humidity)
+# ADF test for stationary
+library('tseries')
+adf.test(ts_humidity)
+# any trend ?
+install.packages('trend')
+library('trend')
+mk.test(ts_humidity)
+length(ts_humidity)
+# TS plot
+plot(ts_humidity)
+# ADF plot for stationary
+Acf(quakes, ylim=c(-1,1))
+# ADF plot for stationary
+Acf(quakes, ylim=c(-1,1))
+# ADF plot for stationary
+Acf(ts_humidity, ylim=c(-1,1))
+mk.test(ts_humidity)
+# any seasonal ?
+# install.packages('seastests')
+library('seastests')
+isSeasonal(ts_humidity)
+tsdisplay(ts_humidity)
+# Close all plot windows
+dev.off()
+tsdisplay(ts_humidity)
+tsdisplay(ts_humidity)
+tsdisplay(diff(ts_humidity,1))
+tsdisplay(diff(ts_humidity,2))
+tsdisplay(diff(ts_humidity,3))
+tsdisplay(diff(ts_humidity,4))
+tsdisplay(diff(ts_humidity,1))
+ts_training <- ts(ts_humidity[1:(length(ts_humidity) * 0.8)], frequency = 7)
+ts_humidity
+ts_humidity
+ts_humidity
+ts_training <- ts(ts_humidity[1:(length(ts_humidity) * 0.8)], frequency = 7)
+ts_testing  <- ts(ts_humidity[-c(1:(length(ts_humidity) * 0.8))], frequency = 7)
+ts_humidity_ses <- ses(ts_training)
+warnings()

@@ -1,0 +1,194 @@
+# Import data
+library("readxl")
+data = read_excel('datasets/Dubai_TSF.xlsx')
+View(data)
+
+data$date <- as.Date(data$date)
+
+# Explore variables
+plot(data$temp)
+plot(data$dew)
+plot(data$humidity)
+plot(data$wind)
+plot(data$pressure)
+
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+length(ts_humidity)
+
+# TS plot
+plot(ts_humidity)
+
+# ADF test for stationary
+library('tseries')
+adf.test(ts_humidity)
+# p-value - 0.01 < 0.05 => The TS is Stationary
+
+# ADF plot for stationary
+Acf(ts_humidity, ylim=c(-1,1))
+
+# any trend ? 
+# install.packages('trend')
+library('trend')
+mk.test(ts_humidity)
+# p-value - 0.0001 < 0.05 => It has trend component.
+# H0: There is no trend present in the series.
+# H1: There is a trend present in the series.
+
+# any seasonal ?
+# install.packages('seastests')
+library('seastests')
+isSeasonal(ts_humidity)
+# False -> No seasonality exists.
+
+# (i) Simple Exponential Smoothing
+# (ii) Holt’s Method
+# (iii) Linear,Trend Model
+
+# Data partitioning using 80-20% ratio
+
+ts_training <- ts(ts_humidity[1:(length(ts_humidity) * 0.8)], frequency = 7)
+ts_testing  <- ts(ts_humidity[-c(1:(length(ts_humidity) * 0.8))], frequency = 7)
+length(ts_testing)
+
+# (i) Simple Exponential Smoothing
+library('forecast')
+ts_humidity_ses <- ses(ts_training, h= 84)
+plot(ts_humidity, main = "Humidity - SES Method Forecast", xlab = "day", ylab = "'F")
+# lines(ts_humidity_ses$fitted, col=2, lwd=2)
+# lines(ts_humidity_ses_forecast, col=3, lwd=2)
+autoplot(ts_humidity_ses)
+
+
+# (ii) Holt's method
+ts_humidity_holts <- holt(ts_training, h=84)
+autoplot(ts_humidity_holts) 
+summary(ts_humidity_holts)
+
+plot(ts_humidity_holts, main = "Humidity - Holt's Method Forecast", xlab = "day", ylab = "'F")
+lines(ts_humidity_holts$fitted, col=2, lwd=2)
+legend("topleft", c("Acutal", "Fitted", "Forecast"), col = c(1, 2, 4), lwd = 2, cex = 0.5)
+
+# (iii) Linear,Trend Model
+
+# Load the time series data
+# data <- ts(c(23, 27, 29, 32, 34, 38, 40, 44, 46, 50), start = c(2010, 1), frequency = 1)
+
+# Fit a linear trend model to the data
+ts_humidity_ltm <- lm(ts_humidity ~ time(ts_humidity))
+
+# Print the model summary
+summary(ts_humidity_ltm)
+
+# Plot the data and the trend line
+plot(ts_humidity, main = "Linear Trend Model", xlab = "day", ylab = "'F")
+abline(ts_humidity_ltm, col = "red")
+
+# Create a new time series object for the forecast period
+new_data <- ts(rep(0, 84), start = end(data) + 1, frequency = frequency(data))
+
+# Generate a forecast for the next 84 time periods
+forecast_data <- forecast::forecast(ts_humidity_ltm, newdata = ts_testing)
+
+# Generate a forecast for the next 5 time periods
+forecast_data <- forecast::forecast(ts_humidity_ltm, h = 84)
+
+# Plot the data, fitted line, and forecast values
+forecast::autoplot(forecast_data) + autolayer(fitted(ts_humidity_ltm), series = "Fitted Line")
+
+
+# Load the time series data
+data <- ts(c(23, 27, 29, 32, 34, 38, 40, 44, 46, 50), start = c(2010, 1), frequency = 1)
+
+# Fit a linear trend model to the data using dynlm
+library(dynlm)
+model <- dynlm(data ~ trend)
+
+# Generate forecasts for the next 5 time periods
+forecast_data <- predict(model, newdata = data.frame(trend = seq(length(ts_training) + 1, length(ts_training) + 84)))
+
+# Print the forecasted values
+forecast_data
+
+
+
+ts_humidity_decompose_add <- decompose(ts_training, type = "additive")
+forecast::forecast(ts_humidity_decompose_add, h = 84)
+plot(ts_humidity_decompose_add) #random means the error plot
+
+decomposition_additive$figure #to give adjusted seasonal variation values # the avg. is nearly 0
+plot(ts_humidity)
+
+ts_humidity_decompose_add <- stlf(ts_training)
+summary(ts_humidity_decompose_add)
+
+plot(x = data$date, y= data$humidity, type = 'l', main = "Humidity - Decompose Method Forecast", xlab = "day", ylab = "'F")
+lines(x = data$date[1:length(ts_training)], y = ts_humidity_decompose_add$fitted, col = 2, lwd = 2)
+forecast <- forecast::forecast(ts_humidity_decompose_add, h = 84)
+summary(forecast)
+length(forecast)
+lines(x = data$date[length(ts_training)+1:length(ts_testing)], y = forecast, col = 2, lwd = 2)
+length(data$date)
+
+abline(ts_humidity_decompose_add$fitted, col=2, lwd=2)
+lines()
+legend("topleft", c("Acutal", "Fitted", "Forecast"), col = c(1, 2, 4), lwd = 2, cex = 0.5)
+autoplot(ts_humidity_decompose_add)
+
+lines()
+
+# EMA
+
+library("TTR")
+ts_humidity_ema7 <- EMA(ts_training, 7)
+plot()
+
+
+
+# ======== ARIMA model ==========
+
+# plotting ACF and PACF
+tsdisplay(ts_humidity)
+
+# testing stationary
+library('tseries')
+adf.test(ts_humidity) # => Not stationary
+
+# getting recommended number of diff.
+ndiffs(ts_humidity)
+# Recommended --> [1] --> d=1 (characteristics of a liner trend)
+
+# plotting ACF and PACF for transformed data directly
+tsdisplay(diff(ts_humidity, 2))
+
+# Building ARIMA (0, 1, 1)
+ts_humidity_arima011 <- arima(ts_humidity, order = c(0,1,1))
+ts_humidity_arima014 <- arima(ts_humidity, order = c(0,1,4))
+ts_humidity_arima012 <- arima(ts_humidity, order = c(0,1,2))
+ts_humidity_arima112 <- arima(ts_humidity, order = c(1,1,2)) # auto.arima
+
+# to generate the unknown parameters/coefficient(s)
+summary(ts_humidity_arima011) 
+
+# to test the significant of the coefficients
+library('lmtest')
+coeftest(ts_humidity_arima011)
+coeftest(ts_humidity_arima114) 
+coeftest(ts_humidity_arima012)
+coeftest(ts_humidity_arima112)
+
+# to conduct Ljung Box test and Residual Analysis
+checkresiduals(ts_humidity_arima011)
+checkresiduals(ts_humidity_arima012)
+checkresiduals(ts_humidity_arima112)
+
+auto.arima(ts_humidity, trace = T)
+
+# to plot the TS with forecasts
+plot(forecast(ts_humidity_arima112, h= 5))
+
+# to add fitted model into the existing plot
+lines(fitted(ts_humidity_arima112), col="blue", lwd=2)
+
+# Close all plot windows
+dev.off()
