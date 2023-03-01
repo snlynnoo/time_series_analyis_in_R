@@ -426,3 +426,4 @@ plot(forecast(quakes_arima101, h= 5))
 
 # to add fitted model into the existing plot
 lines(fitted(quakes_arima101), col=8, lwd=2)
+

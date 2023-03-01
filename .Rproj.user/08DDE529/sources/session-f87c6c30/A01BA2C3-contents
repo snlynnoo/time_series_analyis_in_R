@@ -427,17 +427,3 @@ plot(forecast(quakes_arima101, h= 5))
 # to add fitted model into the existing plot
 lines(fitted(quakes_arima101), col=8, lwd=2)
 
-
-# Load ggplot2 package
-library(ggplot2)
-
-# Create training and testing datasets
-training_quakes <- quakes[1:(length(quakes)*0.8)]
-testing_quakes <- quakes[(length(quakes)*0.8+1):(length(quakes)+1)]
-
-library(ggplot2)
-# Plot both datasets
-ggplot() +
-  geom_point(data = training_quakes, aes(x = long, y = lat, color = depth), alpha = 0.5) +
-  geom_point(data = testing_quakes, aes(x = long, y = lat, color = depth), alpha = 0.5) +
-  labs(x = "Longitude", y = "Latitude", color = "Depth")

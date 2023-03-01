@@ -1,0 +1,15 @@
+# Fit the Holt's model to the training data
+holts_model <- holt(training_ts)
+
+# Plot the fitted model on the training set
+plot(holts_model, main = "Holts Method", xlab = "Date", ylab = "Humidity", lwd=2)
+
+# Add the actual test data to the plot
+lines(testing_ts, col="blue", lwd=2)
+
+# Add the forecasted values to the plot
+holts_forecast <- forecast(holts_model, h = length(testing_ts))
+lines(holts_forecast$mean, col="red", lwd=2)
+
+# Add a legend to the plot
+legend("topleft", legend = c("Original", "Train", "Test", "Forecast"), col = c("black", "red", "blue", "green"), lty = 1, cex = 0.5)
