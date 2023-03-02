@@ -21,6 +21,7 @@ dev.off()
 data <- read_excel('datasets/Dubai_TSF.xlsx')
 # View(data)
 
+plot(decompose(ts_humidity))
 # Explore variables
 plot(data$humidity)
 
@@ -29,7 +30,7 @@ ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
 length(ts_humidity)
 
 # TS plot
-plot(ts_humidity)
+plot(ts_humidity, main = "Daily Average Humdity in Dubai from 2022-01-01 to 2023-02-24", xlab = "Day", ylab = "Humidity (%)")
 
 # ACF plot for stationary
 Acf(ts_humidity)
@@ -150,8 +151,9 @@ coeftest(ts_humidity_arima112) # Sig
 # to conduct Ljung Box test and Residual Analysis
 checkresiduals(ts_humidity_arima200)
 checkresiduals(ts_humidity_arima210)
-checkresiduals(ts_humidity_arima112)
+checkresiduals(ts_humidity_arima200)
 
+summary(ts_humidity_arima200)
 auto.arima(ts_humidity, trace = T)
 
 # to plot the TS with forecasts
