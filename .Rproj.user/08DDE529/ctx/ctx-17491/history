@@ -1,0 +1,512 @@
+length(ts_humidity)
+length(training_ts)
+length(testing_ts)
+ses_model <- ses(training_ts, h=length(training_ts))
+ses_forecast <- forecast(ses_model, h=length(testing_ts))
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(ses_model$fitted,col="red",lwd=2)
+legend("topleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=1, cex = 0.5)
+# performance matrices
+ses_mean_f = ts(ses_forecast$mean, frequency = 7)
+rbind(accuracy(ses_model) , accuracy(ses_mean_f, testing_ts))
+# ======= (ii) Holts Method =======
+holts_model <- holt(training_ts, h=length(training_ts))
+holts_forecast <- forecast(holts_model, h=length(testing_ts))
+# Plot forecast and actual test data
+plot(holts_forecast , main = "Holts Method", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(fitted(holts_model),col="red",lwd=2)
+legend("topleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=1, cex = 0.5)
+# performance matrices
+holts_mean_f <- ts(holts_forecast$mean, frequency = 7)
+rbind(accuracy(holts_model) , accuracy(holts_mean_f, testing_ts))
+trend_data <- 1:length(training_ts)
+lr_model <- tslm(training_ts ~ trend_data)
+new_data <- (length(training_ts) + 1):(length(training_ts) + length(testing_ts))
+lr_forecast <- forecast::forecast(lr_model, newdata = data.frame(trend_data = new_trend_data))
+lr_forecast <- forecast::forecast(lr_model, newdata = data.frame(trend_data = new_data))
+# Plot forecast and actual test data
+plot(lr_forecast, main = "Forecasting using linear trend ", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(lr_forecast$fitted,col="red",lwd=2)
+legend("topleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=2, cex = 0.5)
+# performance matrices
+lr_mean_f <- ts(lr_forecast$mean, frequency = 7)
+rbind(accuracy(lr_model) , accuracy(lr_mean_f, testing_ts))
+# performance matrices
+ses_mean_f = ts(ses_forecast$mean, frequency = 7)
+rbind(accuracy(ses_model) , accuracy(ses_mean_f, testing_ts))
+# performance matrices
+holts_mean_f <- ts(holts_forecast$mean, frequency = 7)
+rbind(accuracy(holts_model) , accuracy(holts_mean_f, testing_ts))
+# performance matrices
+lr_mean_f <- ts(lr_forecast$mean, frequency = 7)
+rbind(accuracy(lr_model) , accuracy(lr_mean_f, testing_ts))
+library('readxl')
+library('forecast')
+library('tseries')
+library('TTR')
+library('uroot')
+library('trend')
+data <- read_excel('datasets/madrid.xlsx')
+# Import data
+library('readxl')
+library('forecast')
+library('tseries')
+library('TTR')
+library('uroot')
+library('trend')
+data <- read_excel('datasets/Japan_Weather.xlsx')
+data <- read_excel('datasets/madrid.xlsx')
+# View(data)
+# Explore variables
+plot(data$temp)
+plot(data$dew)
+# Import data
+library('readxl')
+library('forecast')
+library('tseries')
+library('TTR')
+library('uroot')
+library('trend')
+data <- read_excel('datasets/Japan_Weather.xlsx')
+data <- read_excel('datasets/madrid.xlsx')
+# View(data)
+# Explore variables
+#plot(data$temp)
+#plot(data$dew)
+plot(data$Avg_Humidity)
+data <- read_excel('datasets/madrid.xlsx')
+# Explore variables
+#plot(data$temp)
+#plot(data$dew)
+plot(data$humidity)
+plot(data$wind)
+# convert to TS
+ts_humidity <- ts(data$wind, start = c(2,1), frequency = 7)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# Explore variables
+#plot(data$temp)
+#plot(data$dew)
+plot(data$humidity)
+adf.test(ts_humidity)
+# ADF plot for stationary
+Acf(ts_humidity, ylim=c(-1,1))
+data = read_excel('datasets/Dubai_TSF.xlsx')
+plot(data$humidity)
+adf.test(ts_humidity)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+adf.test(ts_humidity)
+# ADF plot for stationary
+Acf(ts_humidity, ylim=c(-1,1))
+# ADF plot for stationary
+Acf(ts_humidity, ylim=c(-1,1))
+# ADF plot for stationary
+Acf(ts_humidity)
+# ADF plot for stationary
+Acf(ts_humidity)
+adf.test(ts_humidity)
+ses_model <- ses(training_ts, h=length(training_ts))
+ses_forecast <- forecast(ses_model, h=length(testing_ts))
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(ses_model$fitted,col="red",lwd=2)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# Data partitioning using 80-20% ratio
+training_ts <- ts(ts_humidity[1:(length(ts_humidity)*split)], frequency = 7)
+testing_ts <- ts(ts_humidity[-c(1:(length(ts_humidity)*split))], frequency = 7)
+ses_model <- ses(training_ts, h=length(training_ts))
+ses_forecast <- forecast(ses_model, h=length(testing_ts))
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(ses_model$fitted,col="red",lwd=2)
+lines(fitted(ses_model),col="red",lwd=2)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+data = read_excel('datasets/Dubai_TSF.xlsx')
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+ndiffs(ts_humidity)
+mk.test(diff(ts_humidity,1)
+mk.test(diff(ts_humidity,1)
+mk.test(diff(ts_humidity,1))
+kpss.test()
+kpss.test(ts_humidity)
+data$date <- as.Date(data$date)
+data = read_excel('datasets/Dubai_TSF.xlsx')
+plot(data$humidity)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+length(ts_humidity)
+View(ts_humidity)
+ndiffs(ts_humidity)
+# Data partitioning using 80-20% ratio
+training_ts <- ts(ts_humidity[1:(length(ts_humidity)*split)], frequency = 7)
+testing_ts <- ts(ts_humidity[-c(1:(length(ts_humidity)*split))], frequency = 7)
+ses_model <- ses(training_ts, h=length(training_ts))
+ses_forecast <- forecast(ses_model, h=length(testing_ts))
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(fitted(ses_model),col="red",lwd=2)
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing", xlab = "Date", ylab = "Humidity",lwd=2, ylim = c(100,-100) )
+lines(fitted(ses_model),col="red",lwd=2)
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing", xlab = "Date", ylab = "Humidity",lwd=2, ylim = c(0,100) )
+lines(fitted(ses_model),col="red",lwd=2)
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing", xlab = "Date", ylab = "Humidity",lwd=2, ylim = c(0,80) )
+lines(fitted(ses_model),col="red",lwd=2)
+# to add fitted model into the existing plot
+lines(fitted(ts_humidity_arima112), col="red", lwd=2)
+# to plot the TS with forecasts
+plot(forecast(ts_humidity_arima112, h= 5))
+# to add fitted model into the existing plot
+lines(fitted(ts_humidity_arima112), col="red", lwd=2)
+coeftest(ts_humidity_arima112) # Sig
+ts_humidity_arima112 <- arima(ts_humidity, order = c(1,1,2)) # auto.arima
+# to plot the TS with forecasts
+plot(forecast(ts_humidity_arima112, h= 5))
+# to add fitted model into the existing plot
+lines(fitted(ts_humidity_arima112), col="red", lwd=2)
+View(data)
+plot(data$temp)
+# Explore variables
+# plot(data$temp)
+# plot(data$dew)
+plot(data$humidity)
+library('readxl')
+library('forecast')
+library('tseries')
+library('TTR')
+library('uroot')
+library('trend')
+library('lmtest')
+# Import data
+data <- read_excel('datasets/Dubai_TSF.xlsx')
+# Explore variables
+# plot(data$temp)
+# plot(data$dew)
+plot(data$humidity)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+length(ts_humidity)
+View(ts_humidity)
+# TS plot
+plot(ts_humidity)
+# ACF plot for stationary
+Acf(ts_humidity, ylim=c(-1,1))
+# ACF plot for stationary
+Acf(ts_humidity)
+# ACF plot for stationary
+Acf(ts_humidity)
+# ACF plot for stationary
+Acf(ts_humidity)
+# ADF test for stationary
+adf.test(ts_humidity)
+# Number of differencing
+ndiffs(ts_humidity)
+tsdisplay(ts_humidity)
+tsdisplay(ts_humidity)
+dev.off()
+tsdisplay(ts_humidity)
+# MK Test for trend
+mk.test(ts_humidity)
+isSeasonal(ts_humidity)
+# any seasonal ?
+# install.packages('seastests')
+library('seastests')
+# check the length of train and test sets
+length(ts_humidity)
+length(training_ts)
+length(testing_ts)
+library('readxl')
+library('forecast')
+library('tseries')
+library('TTR')
+library('uroot')
+library('trend') # mk.test
+library('seastests') # is.seasonal
+library('lmtest')
+# Import data
+data <- read_excel('datasets/Dubai_TSF.xlsx')
+# Explore variables
+plot(data$humidity)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# TS plot
+plot(ts_humidity)
+# ACF plot for stationary
+Acf(ts_humidity)
+# ADF test for stationary
+adf.test(ts_humidity)
+# Number of differencing
+ndiffs(ts_humidity)
+# MK Test for trend
+mk.test(ts_humidity)
+# KPSS Test for level stationary
+kpss.test(ts_humidity)
+# Data partitioning using 80-20% ratio
+training_ts <- ts(ts_humidity[1:(length(ts_humidity)*split)], frequency = 7)
+gc()
+library('readxl')
+library('forecast')
+library('tseries')
+library('TTR')
+library('uroot')
+library('trend') # mk.test
+library('seastests') # is.seasonal
+library('lmtest')
+# Import data
+data <- read_excel('datasets/Dubai_TSF.xlsx')
+# Explore variables
+plot(data$humidity)
+# convert to TS
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+# TS plot
+plot(ts_humidity)
+# ACF plot for stationary
+Acf(ts_humidity)
+# ADF test for unit root (irregular) stationary
+adf.test(ts_humidity)
+# MK Test for trend
+mk.test(ts_humidity)
+# KPSS Test for level (deterministic) stationary
+kpss.test(ts_humidity)
+# Number of differencing
+ndiffs(ts_humidity)
+# Data partitioning using 80-20% ratio
+training_ts <- ts(ts_humidity[1:(length(ts_humidity)*split)], frequency = 7)
+# Data partitioning using 80-20% ratio
+training_ts <- ts(ts_humidity[1:(length(ts_humidity)*0.8)], frequency = 7)
+testing_ts <- ts(ts_humidity[-c(1:(length(ts_humidity)*0.8))], frequency = 7)
+# check the length of train and test sets
+length(ts_humidity)
+length(training_ts)
+length(testing_ts)
+# ======= (i) Simple exponential Smoothing =======
+ses_model <- ses(training_ts, h=length(training_ts))
+ses_forecast <- forecast(ses_model, h=length(testing_ts))
+# ======= (i) Simple exponential Smoothing =======
+ses_model <- ses(training_ts, h=length(training_ts))
+ses_forecast <- forecast(ses_model, h=length(testing_ts))
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing - Humidity of Dubai", xlab = "Date", ylab = "Humidity",lwd=2, ylim = c(0,80) )
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing - Humidity of Dubai", xlab = "Date", ylab = "Humidity",lwd=2 )
+# ======= (i) Simple exponential Smoothing =======
+ses_model <- ses(training_ts, h=length(testing_ts))
+ses_forecast <- forecast(ses_model, h=length(testing_ts))
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing - Humidity of Dubai", xlab = "Date", ylab = "Humidity",lwd=2 )
+lines(fitted(ses_model),col="red",lwd=2)
+legend("topleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=1, cex = 0.5)
+legend("topleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=1, cex = 0.7)
+# plotting train and test
+plot(ses_forecast, main = "Simple Exponential Smoothing - Humidity of Dubai", xlab = "Date", ylab = "Humidity",lwd=2 )
+lines(fitted(ses_model),col="red",lwd=2)
+legend("topleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=1, cex = 0.6)
+# performance matrices
+ses_mean_f = ts(ses_forecast$mean, frequency = 7)
+rbind(accuracy(ses_model) , accuracy(ses_mean_f, testing_ts))
+# ======= (ii) Holts Method =======
+holts_model <- holt(training_ts, h=length(testing_ts))
+holts_forecast <- forecast(holts_model, h=length(testing_ts))
+# Plot forecast and actual test data
+plot(holts_forecast , main = "Holts Method", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(fitted(holts_model),col="red",lwd=2)
+legend("topleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=1, cex = 0.6)
+# performance matrices
+holts_mean_f <- ts(holts_forecast$mean, frequency = 7)
+rbind(accuracy(holts_model) , accuracy(holts_mean_f, testing_ts))
+trend_data <- 1:length(training_ts)
+lr_model <- tslm(training_ts ~ trend_data)
+new_data <- (length(training_ts) + 1):(length(training_ts) + length(testing_ts))
+lr_forecast <- forecast::forecast(lr_model, newdata = data.frame(trend_data = new_data))
+# Plot forecast and actual test data
+plot(lr_forecast, main = "Forecasting using linear trend ", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(lr_forecast$fitted,col="red",lwd=2)
+legend("topleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=2, cex = 0.5)
+# Plot forecast and actual test data
+plot(lr_forecast, main = "Forecasting using linear trend ", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(lr_forecast$fitted,col="red",lwd=2)
+legend("bottomleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=2, cex = 0.5)
+# Plot forecast and actual test data
+plot(lr_forecast, main = "Forecasting using linear trend ", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(lr_forecast$fitted,col="red",lwd=2)
+legend("bottomleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=2, cex = 0.4)
+# Plot forecast and actual test data
+plot(lr_forecast, main = "Forecasting using linear trend ", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(lr_forecast$fitted,col="red",lwd=2)
+legend("bottomleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=2, cex = 0.45)
+# Plot forecast and actual test data
+plot(lr_forecast, main = "Forecasting using linear trend ", xlab = "Date", ylab = "Humidity",lwd=2)
+lines(lr_forecast$fitted,col="red",lwd=2)
+legend("bottomleft", legend = c("Original","Train", "Test"), col=c("black","red","blue"), lty=2, cex = 0.43)
+# plotting ACF and PACF
+tsdisplay(ts_humidity)
+# plotting ACF and PACF
+tsdisplay(ts_humidity)
+# testing stationary
+adf.test(ts_humidity) # => Not stationary
+# getting recommended number of diff.
+ndiffs(ts_humidity)
+# plotting ACF and PACF for transformed data directly
+tsdisplay(diff(ts_humidity, 2))
+# plotting ACF and PACF for transformed data directly
+tsdisplay(diff(ts_humidity, 2))
+tsdisplay(ts_humidity)
+# plotting ACF and PACF for transformed data directly
+tsdisplay(diff(ts_humidity, 1))
+# Building ARIMA (0, 1, 1)
+ts_humidity_arima210 <- arima(ts_humidity, order = c(2,1,0)) # own
+# Building ARIMA (0, 1, 1)
+ts_humidity_arima210 <- arima(ts_humidity, order = c(2,0,0))
+ts_humidity_arima210 <- arima(ts_humidity, order = c(2,1,0)) # own
+# Building ARIMA (0, 1, 1)
+ts_humidity_arima200 <- arima(ts_humidity, order = c(2,0,0))
+ts_humidity_arima210 <- arima(ts_humidity, order = c(2,1,0)) # own
+ts_humidity_arima112 <- arima(ts_humidity, order = c(1,1,2)) # auto.arima
+# to generate the unknown parameters/coefficient(s)
+summary(ts_humidity_arima011)
+# Building ARIMA (0, 1, 1)
+ts_humidity_arima200 <- arima(ts_humidity, order = c(2,0,0))
+ts_humidity_arima210 <- arima(ts_humidity, order = c(2,1,0)) # own
+ts_humidity_arima112 <- arima(ts_humidity, order = c(1,1,2)) # auto.arima
+# to generate the unknown parameters/coefficient(s)
+summary(ts_humidity_arima112)
+# to test the significant of the coefficients
+library('lmtest')
+coeftest(ts_humidity_arima200)
+coeftest(ts_humidity_arima210)
+coeftest(ts_humidity_arima112) # Sig
+# to conduct Ljung Box test and Residual Analysis
+checkresiduals(ts_humidity_arima200)
+checkresiduals(ts_humidity_arima210)
+checkresiduals(ts_humidity_arima112)
+# to plot the TS with forecasts
+plot(forecast(ts_humidity_arima200, h= 5))
+# to plot the TS with forecasts
+plot(forecast(ts_humidity_arima200, h= 5))
+# to plot the TS with forecasts
+plot(forecast(ts_humidity_arima200, h= 5))
+# to add fitted model into the existing plot
+lines(fitted(ts_humidity_arima200), col="red", lwd=2)
+plot(forecast(ts_humidity_arima112, h= 5))
+lines(fitted(ts_humidity_arima112), col="red", lwd=2)
+# performance matrices for ARIMA(2,0,0)
+accuracy(ts_humidity_arima200)
+accuracy(ts_humidity_arima112)
+# Import library
+library('readxl')
+library('forecast')
+library('tseries')
+checkresiduals(ts_humidity_arima112)
+library('readxl')
+library('forecast')
+library('tseries')
+library('TTR')
+library('uroot')
+library('trend') # mk.test
+library('seastests') # is.seasonal
+library('lmtest')
+ts_humidity_arima112 <- arima(ts_humidity, order = c(1,1,2)) # auto.arima
+# to generate the unknown parameters/coefficient(s)
+summary(ts_humidity_arima112)
+coeftest(ts_humidity_arima112) # Sig
+summary(ts_humidity_arima200)
+# Import library
+library('readxl')
+library('forecast')
+library('tseries')
+library('TTR')
+library('uroot')
+library('trend') # mk.test
+library('seastests') # is.seasonal
+library('lmtest')
+# Import data
+data <- read_excel('datasets/Dubai_TSF.xlsx')
+View(data)
+# Explore variables
+plot(data$humidity)
+plot(ts_humidity)
+ts_humidity <- ts(data$humidity, start = c(2,1), frequency = 7)
+length(ts_humidity)
+# TS plot
+plot(ts_humidity)
+# TS plot
+plot(ts_humidity, main = "Daily Average Humdity in Dubai from 2022-01-01 to 2023-02-24", xlab = "Day", ylab = "Humidity (%)")
+decompose(ts_humidity)
+decompose(ts_humidity)
+decompose(ts_humidity)
+plot(decompose(ts_humidity))
+data_IBM <- read.csv("datasets/T4_Q5_IBM_WeeklyStockPrice.csv")
+IBM <- ts(data_IBM$Week)
+tsdisplay(IBM)
+data_IBM
+tsdisplay(IBM)
+IBM <- ts(data_IBM$IBM)
+tsdisplay(IBM)
+# Import libraries
+library('forecast')
+library('tseries')
+# adf test
+adf.test(IBM)
+# adf test
+adf.test(IBM)
+# KPSS test
+kpss.test(IBM)
+# recommended
+ndiffs(IBM)
+# KPSS test
+kpss.test(IBM)
+kpss.test(diff(IBM),1)
+kpss.test(diff(IBM,1))
+# Building ARIMA model
+arima_110 <- arima(IBM , order = c(1,1,0)))
+arima_111 <- arima(IBM , order = c(1,1,1)))
+# Building ARIMA model
+arima_110 <- arima(IBM , order = c(1,1,0))
+arima_111 <- arima(IBM , order = c(1,1,1))
+# Test the sig. of coefficients
+coeftest(arima_110)
+coeftest(arima_111)
+# Test the adequcy of the models
+checkresiduals(arima_110)
+checkresiduals(arima_111)
+# Measurement of forecast error
+accuracy(arima_110)
+accuracy(arima_111)
+# Forecasts
+forecast(arima_110, h= 1)
+# Plot the forecasts
+plot(forecast(arima_110, h= 1))
+# Plot the forecasts
+plot(forecast(arima_110, h= 1), main = "IBM Stock Price", xlab = "Week", ylab = "Price")
+lines(arima_110, col = "red", lwd =2 )
+lines(fitted(arima_110), col = "red", lwd = 2 )
+legend("topleft", c("Actual", "ARIMA(1,1,0)", "Forecast"), col = c("black", "red", "blue"))
+legend("topleft", c("Actual", "ARIMA(1,1,0)", "Forecast"), col = c("black", "red", "blue"), lwd = 2, cex = 0.5)
+legend("topleft", c("Actual", "ARIMA(1,1,0)", "Forecast"), col = c("black", "red", "blue"), lwd = 2, cex = 0.7)
+legend("topleft", c("Actual", "ARIMA(1,1,0)", "Forecast"), col = c("black", "red", "blue"), lwd = 2, cex = 0.9)
+# Plot the forecasts
+plot(forecast(arima_110, h= 1), main = "IBM Stock Price", xlab = "Week", ylab = "Price")
+lines(fitted(arima_110), col = "red", lwd = 2 )
+legend("topleft", c("Actual", "ARIMA(1,1,0)", "Forecast"), col = c("black", "red", "blue"), lwd = 2, cex = 0.9)
+0
+0
+0
+# Plot the forecasts
+plot(forecast(arima_110, h= 1), main = "IBM Stock Price", xlab = "Week", ylab = "Price")
+lines(fitted(arima_110), col = "red", lwd = 2 )
+legend("topleft", c("Actual", "ARIMA(1,1,0)", "Forecast"), col = c("black", "red", "blue"), lwd = 2, cex = 1)
+data_NYC <- read.csv("datasets/T4_Q6_NYCBank_WeeklyInvestments.csv")
+NYCBank <- ts(data_NYC$Investment)
+NYCBank <- ts(data_NYC$Investment, start = 1970, frequency = 12)
+library('uroot')
+NYCBank <- ts(data_NYC$Investment, start = 1970, frequency = 12)
+tsdisplay(NYCBank)
