@@ -196,33 +196,54 @@ ndiffs(ts_humidity)
 tsdisplay(diff(ts_humidity, 2))
 
 # Building ARIMA (0, 1, 1)
-ts_humidity_arima011 <- arima(ts_humidity, order = c(0,1,1))
-ts_humidity_arima014 <- arima(ts_humidity, order = c(0,1,4))
+ts_humidity_arima200 <- arima(ts_humidity, order = c(2,0,0)) # sig - 0.4398
 ts_humidity_arima012 <- arima(ts_humidity, order = c(0,1,2))
-ts_humidity_arima112 <- arima(ts_humidity, order = c(1,1,2)) # auto.arima
+ts_humidity_arima212 <- arima(ts_humidity, order = c(2,1,2)) # sig - 0.825
+ts_humidity_arima412 <- arima(ts_humidity, order = c(4,1,2)) # sig - 0.661
+ts_humidity_arima210 <- arima(ts_humidity, order = c(2,1,0)) 
+ts_humidity_arima112 <- arima(ts_humidity, order = c(1,1,2)) # auto.arima  # sig - 0.8667
+ts_humidity_arima111 <- arima(ts_humidity, order = c(1,1,1))
 
 # to generate the unknown parameters/coefficient(s)
-summary(ts_humidity_arima011) 
+summary(ts_humidity_arima112)
 
 # to test the significant of the coefficients
 library('lmtest')
-coeftest(ts_humidity_arima011)
-coeftest(ts_humidity_arima114) 
-coeftest(ts_humidity_arima012)
-coeftest(ts_humidity_arima112)
+coeftest(ts_humidity_arima200) # sig
+coeftest(ts_humidity_arima012) # sig
+coeftest(ts_humidity_arima212) # sig - ma only
+coeftest(ts_humidity_arima412) # none
+coeftest(ts_humidity_arima210) # ar2 only
+coeftest(ts_humidity_arima112) # Sig
+coeftest(ts_humidity_arima111)
+
 
 # to conduct Ljung Box test and Residual Analysis
-checkresiduals(ts_humidity_arima011)
+checkresiduals(ts_humidity_arima200) # sig - 0.4398
 checkresiduals(ts_humidity_arima012)
-checkresiduals(ts_humidity_arima112)
-
-auto.arima(ts_humidity, trace = T)
+checkresiduals(ts_humidity_arima212) # sig - 0.825
+checkresiduals(ts_humidity_arima412) # sig - 0.661
+checkresiduals(ts_humidity_arima210)
+checkresiduals(ts_humidity_arima111) # sig - 0.8667
 
 # to plot the TS with forecasts
-plot(forecast(ts_humidity_arima112, h= 5))
+plot(forecast(ts_humidity_arima200, h= 30))
+plot(forecast(ts_humidity_arima112, h= 30))
 
 # to add fitted model into the existing plot
+lines(fitted(ts_humidity_arima200), col="red", lwd=2)
 lines(fitted(ts_humidity_arima112), col="red", lwd=2)
+
+# performance matrices for ARIMA(2,0,0)
+accuracy(ts_humidity_arima200) # sig - 0.4398
+#accuracy(ts_humidity_arima012)
+accuracy(ts_humidity_arima212) # sig - 0.825
+accuracy(ts_humidity_arima412) # sig - 0.661
+# accuracy(ts_humidity_arima210)
+accuracy(ts_humidity_arima111) # sig - 0.8667
+accuracy(ts_humidity_arima112)
+
+shapiro.test(ts_humidity_arima211$residuals)
 
 # Close all plot windows
 dev.off()

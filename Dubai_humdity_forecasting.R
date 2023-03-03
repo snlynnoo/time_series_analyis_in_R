@@ -13,6 +13,7 @@ library('uroot')
 library('trend') # mk.test
 library('seastests') # is.seasonal
 library('lmtest') # coeftest
+library('dplyr')
 
 # Close all plot windows
 dev.off()
@@ -35,8 +36,6 @@ plot(ts_humidity, main = "Daily Average Humdity in Dubai from 2022-01-01 to 2023
 # ACF plot for stationary
 Acf(ts_humidity, main="Autocorrelation Plot for Humidity")
 Acf(diff(ts_humidity,1), main="ACF Plot after first differencing")
-
-
 
 # ADF test for unit root (irregular/level) stationary
 adf.test(ts_humidity)
@@ -102,7 +101,7 @@ holts_model <- holt(training_ts, h=length(testing_ts))
 holts_forecast <- forecast(holts_model, h=length(testing_ts))
 
 # Plot forecast and actual test data
-plot(holts_forecast , main = "Forecasts using Holts Method", xlab = "Day", ylab = "Humidity (%)",lwd=2)
+plot(holts_forecast , main = "Forecasts using Holts Method", xlab = "Day", ylab = "Humidity (%)",lwd=2, ylim = c(0,100))
 lines(fitted(holts_model),col="red",lwd=2)
 legend("topleft", legend = c("Actual","Fitted", "Forecast"), col=c("black","red","blue"), lty=1, cex = 1.3)
 
@@ -128,10 +127,6 @@ rbind(accuracy(lr_model) , accuracy(lr_mean_f, testing_ts))
 
 # ======== ARIMA model ==========
 
-# plotting ACF and PACF
-tsdisplay(ts_humidity, main = "ACF and PACF Plots for original series")
-tsdisplay(diff(ts_humidity,1), main = "ACF and PACF Plots after first differencing")
-
 # testing stationary
 adf.test(ts_humidity) # Stationary
 
@@ -139,52 +134,38 @@ adf.test(ts_humidity) # Stationary
 ndiffs(ts_humidity)
 # Recommended --> [1] --> d=1 (characteristics of a liner trend)
 
+# plotting ACF and PACF
+tsdisplay(ts_humidity, main = "ACF and PACF Plots for original series")
+
 # plotting ACF and PACF for transformed data directly
-tsdisplay(diff(ts_humidity, 1))
+tsdisplay(diff(ts_humidity,1), main = "ACF and PACF Plots after first differencing")
 
 # Auto ARIMA
 auto.arima(ts_humidity, trace = T)
 
 # Building ARIMA (0, 1, 1)
-ts_humidity_arima200 <- arima(ts_humidity, order = c(2,0,0)) # sig - 0.4398
-ts_humidity_arima012 <- arima(ts_humidity, order = c(0,1,2))
-ts_humidity_arima212 <- arima(ts_humidity, order = c(2,1,2)) # sig - 0.825
-ts_humidity_arima412 <- arima(ts_humidity, order = c(4,1,2)) # sig - 0.661
-ts_humidity_arima210 <- arima(ts_humidity, order = c(2,1,0)) 
-ts_humidity_arima112 <- arima(ts_humidity, order = c(1,1,2)) # auto.arima  # sig - 0.8667
+ts_humidity_arima212 <- arima(ts_humidity, order = c(2,1,2))
+ts_humidity_arima112 <- arima(ts_humidity, order = c(1,1,2))
 
 # to generate the unknown parameters/coefficient(s)
+summary(ts_humidity_arima212)
 summary(ts_humidity_arima112)
 
 # to test the significant of the coefficients
-library('lmtest')
-coeftest(ts_humidity_arima200) # sig
-coeftest(ts_humidity_arima012) # sig
-coeftest(ts_humidity_arima212) # sig - ma only
-coeftest(ts_humidity_arima412) # none
-coeftest(ts_humidity_arima210) # ar2 only
-coeftest(ts_humidity_arima112) # Sig
+coeftest(ts_humidity_arima212)
+coeftest(ts_humidity_arima112)
 
 # to conduct Ljung Box test and Residual Analysis
-checkresiduals(ts_humidity_arima200) # sig - 0.4398
-checkresiduals(ts_humidity_arima012)
-checkresiduals(ts_humidity_arima212) # sig - 0.825
-checkresiduals(ts_humidity_arima412) # sig - 0.661
-checkresiduals(ts_humidity_arima210)
-checkresiduals(ts_humidity_arima112) # sig - 0.8667
+checkresiduals(ts_humidity_arima212)
+checkresiduals(ts_humidity_arima112)
+
+# performance matrices
+accuracy(ts_humidity_arima212)
+accuracy(ts_humidity_arima112)
 
 # to plot the TS with forecasts
-plot(forecast(ts_humidity_arima200, h= 30))
-plot(forecast(ts_humidity_arima112, h= 30))
+plot(forecast(ts_humidity_arima212, h= 30))
 
 # to add fitted model into the existing plot
-lines(fitted(ts_humidity_arima200), col="red", lwd=2)
-lines(fitted(ts_humidity_arima112), col="red", lwd=2)
-
-# performance matrices for ARIMA(2,0,0)
-accuracy(ts_humidity_arima200) # sig - 0.4398
-#accuracy(ts_humidity_arima012)
-accuracy(ts_humidity_arima212) # sig - 0.825
-accuracy(ts_humidity_arima412) # sig - 0.661
-# accuracy(ts_humidity_arima210)
-accuracy(ts_humidity_arima112) # sig - 0.8667
+lines(fitted(ts_humidity_arima212), col="red", lwd=2)
+legend("bottomleft", legend = c("Actual","Fitted", "Forecast"), col=c("black","red","blue"), lty=1, cex = 0.5)
