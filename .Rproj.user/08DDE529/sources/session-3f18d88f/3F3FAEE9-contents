@@ -18,6 +18,8 @@ library('dplyr')
 # Close all plot windows
 dev.off()
 
+
+summary(data$humidity)
 # Import data
 data <- read_excel('datasets/Dubai_TSF.xlsx')
 # View(data)
@@ -164,8 +166,8 @@ accuracy(ts_humidity_arima212)
 accuracy(ts_humidity_arima112)
 
 # to plot the TS with forecasts
-plot(forecast(ts_humidity_arima212, h= 30))
+plot(forecast(ts_humidity_arima212, h= 60))
 
 # to add fitted model into the existing plot
 lines(fitted(ts_humidity_arima212), col="red", lwd=2)
-legend("bottomleft", legend = c("Actual","Fitted", "Forecast"), col=c("black","red","blue"), lty=1, cex = 0.5)
+legend("bottomleft", legend = c("Actual","Fitted", "Forecast"), col=c("black","red","blue"), lty=1, cex = 1.3)
