@@ -144,7 +144,7 @@ accuracy(ts_humidity_arima212)
 accuracy(ts_humidity_arima112)
 
 # Plot the TS with forecasts for the best model
-plot(forecast(ts_humidity_arima212, h= 30))
+plot(forecast(ts_humidity_arima112, h= 30))
 
 # Add fitted model into existing plot
 lines(fitted(ts_humidity_arima212), col="red", lwd=2)
