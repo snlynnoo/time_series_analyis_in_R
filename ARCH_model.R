@@ -154,3 +154,11 @@ garchFit <- ugarchfit(spec=garchSpec, data=AAPL_rTS)
 
 # Model Analysis Output
 garchFit
+
+# Forecasting for next 10 period
+forecast.garch <- ugarchforecast(garchFit)
+
+# Plot the forecast
+plot(forecast.garch)
+
+# select plot to show using options provided
