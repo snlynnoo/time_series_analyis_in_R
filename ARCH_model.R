@@ -1,11 +1,14 @@
 # Samsung Stock Price 2022
 
 # Import libraries
+library('readr')
 library('forecast')
 library('tseries')
 library('lmtest')
+library('rugarch')
+library('dynlm')
 
-# ========== FITTING ARIMA MODEL ==========
+# ========== FITTING ARIMA MODEL (Exercise :1 ) ==========
 # Extract the Adjusted Close data, conduct the following analysis: 
 # https://finance.yahoo.com/quote/005930.KS/history?p=005930.KS
 # Plotting the data 
@@ -55,7 +58,7 @@ accuracy(arima_samsung_110)
 coeftest(arima_samsung_010)
 coeftest(arima_samsung_110)
 
-# ========== FITTING ARCH MODEL ==========
+# ========== FITTING ARCH MODEL (Exercise: 2) ==========
 # Plotting the data -> Done
 # Fit an ARIMA model and checking for white noise 
 # Testing for the ARCH effects 
@@ -65,6 +68,9 @@ coeftest(arima_samsung_110)
 # install.packages('rugarch')
 library('rugarch')
 library('dynlm')
+
+# Import dataset
+samsung_data <- read.csv("datasets/Samsung_Stock_2022.csv")
 
 # Plot ACF and PACF for residual
 tsdisplay(arima_samsung_010$residuals)
@@ -85,4 +91,66 @@ plot(samsung_rTS)
 
 # Plot ACF and PACF for transformed series. 
 tsdisplay(samsung_rTS)
-# no spike -> ignore ARIMA
+# no spikes in both ACF and PACF -> ignore ARIMA ==> ARMA(0,0)
+
+# ========== ARCH(1) ==========
+
+# (We use GARCH model function to build ARCH model by customizing the parameters)
+# {Meaning there is only p process in the model, p = 1,*** garchOrder=c(1,0)}
+# No ARMA process: *** armaOrder=c(0,0))
+
+# Specifying ARCH(1) model parameters
+garchSpec <- ugarchspec(variance.model=list(model="sGARCH",garchOrder=c(1,0)),
+                        mean.model=list(armaOrder=c(0,0)),distribution.model="std")
+
+# Fitting ARCH(1) model with SAMSUMG data
+garchFit <- ugarchfit(spec=garchSpec, data=samsung_rTS)
+
+# Model Analysis Output
+garchFit
+
+
+# ========== GARCH(1) ==========
+
+# Specifying GARCH model parameters
+garchSpec <- ugarchspec(variance.model=list(model="sGARCH",garchOrder=c(1,1)),
+                        mean.model=list(armaOrder=c(0,0)),distribution.model="std")
+
+# Fitting GARCH model with SAMSUMG data
+garchFit <- ugarchfit(spec=garchSpec, data=samsung_rTS)
+
+# Model Analysis Output
+garchFit
+
+
+# ========== FITTING GARCH MODEL (Exercise: 3) ==========
+# Apple Stock Data
+
+# Import data
+AAPL <- read_csv("datasets/AAPL.csv")
+View(AAPL)
+
+# Transform into TS
+AAPL <- ts(AAPL$`Adj Close`)
+
+# ACF and PACF
+tsdisplay(AAPL) # Since the values' range is not large, No log transforatation
+
+# Number of differencing
+ndiffs(AAPL)
+
+# ACF and PACF after differencing 
+tsdisplay(diff(AAPL,1))
+
+# Return model 
+AAPL_rTS <- ts(diff(AAPL,1))
+
+# Specifying GARCH model parameters
+garchSpec <- ugarchspec(variance.model=list(model="sGARCH",garchOrder=c(1,1)),
+                        mean.model=list(armaOrder=c(1,1)),distribution.model="std")
+
+# Fitting GARCH model with Apple Stock data
+garchFit <- ugarchfit(spec=garchSpec, data=AAPL_rTS)
+
+# Model Analysis Output
+garchFit
